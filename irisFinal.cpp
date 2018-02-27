@@ -1,5 +1,25 @@
+///////////////////////////////////////////////////////////////////////////////////
+///
+///
+///		Naive Bayesian Classification on Iris Data Set
+///		Turzo Ahsan Sami
+///		Roll: 181812, MIT-18
+///
+///
+///////////////////////////////////////////////////////////////////////////////////
+
+
+
 #include<bits/stdc++.h>
 using namespace std;
+
+
+//////////////////////////////////////////////////////////////////////
+//
+//	reading iris data from file
+//	and storing into separate arrays based upon the attributes
+//
+//////////////////////////////////////////////////////////////////////
 
 double sl[150], sw[150], pl[150], pw[150];
 
@@ -25,13 +45,13 @@ static void irisLoad()
         getline(ip,pW,',');
         getline(ip,sp,'\n');
 
-        //std::cout << i;
-        //std::cout <<    id  <<',';
-        //std::cout <<    sL  <<',';
-        //std::cout <<    sW  <<',';
-        //std::cout <<    pL  <<',';
-        //std::cout <<    pW  <<',';
-        //std::cout <<    sp  <<'\n';
+        // std::cout << i;
+        // std::cout <<    id  <<',';
+        // std::cout <<    sL  <<',';
+        // std::cout <<    sW  <<',';
+        // std::cout <<    pL  <<',';
+        // std::cout <<    pW  <<',';
+        // std::cout <<    sp  <<'\n';
 
         sl[i]   =   atof(sL.c_str());
         sw[i]   =   atof(sW.c_str());
@@ -51,25 +71,38 @@ static void irisLoad()
     op.close();
 }
 
-static void printArray()
-{
-    for(int i = 0; i<150; i++)
-        cout<<sl[i]<<','<<sw[i]<<','<<pl[i]<<','<<pw[i]<<endl;
-}
+// static void printArray()
+// {
+//     for(int i = 0; i<150; i++)
+//         cout<<sl[i]<<','<<sw[i]<<','<<pl[i]<<','<<pw[i]<<endl;
+// }
+
+
+
+//////////////////////////////////////////////////////////////////////
+//
+//	calculating Mean and Standard Deviation of each attribute
+//
+//////////////////////////////////////////////////////////////////////
+
+
+
 
 double sentosa_mean_sepalLength, sentosa_mean_sepalWidth;
 double sentosa_mean_petalLength, sentosa_mean_petalWidth;
-double virginica_mean_sepalLength, virginica_mean_sepalWidth;
-double virginica_mean_petalLength, virginica_mean_petalWidth;
-double versi_mean_sepalLength, versi_mean_sepalWidth;
-double versi_mean_petalLength, versi_mean_petalWidth;
-
 double sentosa_sd_sepalLength, sentosa_sd_sepalWidth;
 double sentosa_sd_petalLength, sentosa_sd_petalWidth;
-double virginica_sd_sepalLength, virginica_sd_sepalWidth;
-double virginica_sd_petalLength, virginica_sd_petalWidth;
+
+double versi_mean_sepalLength, versi_mean_sepalWidth;
+double versi_mean_petalLength, versi_mean_petalWidth;
 double versi_sd_sepalLength, versi_sd_sepalWidth;
 double versi_sd_petalLength, versi_sd_petalWidth;
+
+double virginica_mean_sepalLength, virginica_mean_sepalWidth;
+double virginica_mean_petalLength, virginica_mean_petalWidth;
+double virginica_sd_sepalLength, virginica_sd_sepalWidth;
+double virginica_sd_petalLength, virginica_sd_petalWidth;
+
 
 static void getMean()
 {
@@ -165,6 +198,16 @@ static void getSD()
 
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////
+//
+//	calculating the range of each attribute : x = { (mean - sd), (mean + sd) }
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+
+/*
+
 double sentosa_sepalLength_left, sentosa_sepalLength_right;
 double sentosa_sepalWidth_left, sentosa_sepalWidth_right;
 double sentosa_petalLength_left, sentosa_petalLength_right;
@@ -229,25 +272,55 @@ static void getRange()
     virginica_petalWidth_right = virginica_mean_petalWidth + virginica_sd_petalWidth;
 }
 
+*/
+
+///////////////////////////////////////////////////////////////////////////////////
+///
+///
+///		Naive Bayesian Classification using Gaussian Proability Distribution
+///		link: https://brilliant.org/wiki/naive-bayes-classifier/
+///		link: http://mathworld.wolfram.com/NormalDistribution.html
+///
+///
+///////////////////////////////////////////////////////////////////////////////////
+
+
+
 #define pi acos(-1.00)
 #define root_twice_pi sqrt(pi*2)
 
 const double p_sentosa = 50/150;
-const double p_veri = 50/150;
+const double p_versi = 50/150;
 const double p_virginica = 50/150;
+
+// driver functions
+
 
 double sentosaProbability( double sll, double sww, double pll, double pww);
 double versiProbability( double sll, double sww, double pll, double pww);
 double virginicaProbability( double sll, double sww, double pll, double pww);
 
+
+
+
+///////////////////////////////////////////////////////////////////////////////////
+///
+///
+///		main Function
+///
+///
+///////////////////////////////////////////////////////////////////////////////////
+
+
+
 int main()
 {
 
     irisLoad();
-    printArray();
+    //printArray();
     getMean();
     getSD();
-    getRange();
+    //getRange();
 
     double sll, sww, pll, pww;
     cin>>sll>>sww>>pll>>pww;
@@ -291,7 +364,7 @@ double sentosaProbability( double sll, double sww, double pll, double pww)
     e = -(x/y);
     double P_pw_sentosa = exp(e) / (sigma * root_twice_pi);
 
-    f_x = p_sentosa * P_sl_sentosa * P_sw_sentosa * P_pl_sentosa * P_pw_sentosa;
+    double f_x = p_sentosa * P_sl_sentosa * P_sw_sentosa * P_pl_sentosa * P_pw_sentosa;
 
     return f_x;
 }
@@ -328,7 +401,7 @@ double versiProbability( double sll, double sww, double pll, double pww)
     e = -(x/y);
     double P_pw_versi = exp(e) / (sigma * root_twice_pi);
 
-    f_x = p_versi * P_sl_versi * P_sw_versi * P_pl_versi * P_pw_versi;
+    double f_x = p_versi * P_sl_versi * P_sw_versi * P_pl_versi * P_pw_versi;
 
     return f_x;
 }
@@ -365,7 +438,7 @@ double virginicaProbability( double sll, double sww, double pll, double pww)
     e = -(x/y);
     double P_pw_virginica = exp(e) / (sigma * root_twice_pi);
 
-    f_x = p_virginica * P_sl_virginica * P_sw_virginica * P_pl_virginica * P_pw_virginica;
+    double f_x = p_virginica * P_sl_virginica * P_sw_virginica * P_pl_virginica * P_pw_virginica;
 
     return f_x;
 }
